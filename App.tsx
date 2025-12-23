@@ -44,7 +44,7 @@ const Logo: React.FC = () => (
     <div className="w-9 h-9 bg-cyan-500 rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-transform hover:scale-105">
       <Zap size={20} className="text-white fill-current" />
     </div>
-    <span className="font-orbitron font-black text-2xl tracking-tighter text-slate-900 neon-glow italic">
+    <span className="font-orbitron font-black text-2xl tracking-tighter text-slate-900 neon-glow">
       SELFHACK
     </span>
   </div>
