@@ -1,24 +1,43 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle, Snowflake } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
 // --- Types ---
 
 type AppState = 'HERO' | 'LOADING' | 'ZEN';
 
-// --- Mock Data ---
+// --- Components ---
 
-const PERFORMANCE_DATA = [
-  { name: '00:00', val: 45 },
-  { name: '04:00', val: 52 },
-  { name: '08:00', val: 89 },
-  { name: '12:00', val: 65 },
-  { name: '16:00', val: 78 },
-  { name: '20:00', val: 95 },
-  { name: '24:00', val: 88 },
-];
+const SnowflakeOverlay: React.FC = () => {
+  const snowflakes = useMemo(() => {
+    return Array.from({ length: 60 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      animationDuration: `${Math.random() * 8 + 4}s`,
+      animationDelay: `${Math.random() * 5}s`,
+      size: `${Math.random() * 5 + 3}px`,
+      opacity: Math.random() * 0.4 + 0.5,
+    }));
+  }, []);
 
-// --- Sub-components ---
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[100] overflow-hidden">
+      {snowflakes.map((flake) => (
+        <div
+          key={flake.id}
+          className="snowflake"
+          style={{
+            left: flake.left,
+            width: flake.size,
+            height: flake.size,
+            opacity: flake.opacity,
+            animation: `snow-fall ${flake.animationDuration} linear infinite ${flake.animationDelay}`,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 const Logo: React.FC = () => (
   <div className="flex items-center gap-3 select-none">
@@ -37,21 +56,54 @@ const GlassCard: React.FC<{ children: React.ReactNode; className?: string }> = (
   </div>
 );
 
-const Navbar: React.FC = () => (
-  <nav className="fixed top-0 left-0 right-0 z-50 px-8 py-6 flex items-center justify-between pointer-events-none">
+const SantaHat: React.FC = () => (
+  <div className="absolute -top-[18px] -left-[6px] pointer-events-none z-10 santa-hat-anim">
+    {/* Scaled up by ~15% (width 18->21, height 14->16) and darkened white parts for visibility */}
+    <svg width="21" height="17" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Red Body */}
+      <path d="M9 1L17 11H1L9 1Z" fill="#ef4444" stroke="#b91c1c" strokeWidth="0.5" />
+      {/* Darkened/Off-white Brim - slightly slimmer height */}
+      <rect x="1" y="10.5" width="16" height="3" rx="1.5" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="0.5" />
+      {/* Darkened/Off-white Pom-pom */}
+      <circle cx="9" cy="2" r="1.8" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="0.5" />
+    </svg>
+  </div>
+);
+
+const Navbar: React.FC<{ isSnowing: boolean; onToggleSnow: () => void }> = ({ isSnowing, onToggleSnow }) => (
+  <nav className="fixed top-0 left-0 right-0 z-[110] px-8 py-6 flex items-center justify-between pointer-events-none">
     <div className="pointer-events-auto">
       <Logo />
     </div>
-    <div className="hidden md:flex items-center gap-8 pointer-events-auto">
-      {['PROTOCOL', 'CORE', 'Sovereignty'].map((item) => (
-        <a key={item} href="#" className="font-mono-jet text-[10px] font-bold text-slate-500 hover:text-cyan-500 transition-colors tracking-widest uppercase">
-          {item}
-        </a>
-      ))}
-      <div className="h-4 w-[1px] bg-slate-200"></div>
+    <div className="flex items-center gap-4 md:gap-8 pointer-events-auto">
+      <div className="hidden md:flex items-center gap-8">
+        {['PROTOCOL', 'CORE', 'Sovereignty'].map((item) => (
+          <a key={item} href="#" className="font-mono-jet text-[10px] font-bold text-slate-500 hover:text-cyan-500 transition-colors tracking-widest uppercase">
+            {item}
+          </a>
+        ))}
+        <div className="h-4 w-[1px] bg-slate-200"></div>
+      </div>
+      
+      {/* Snow Toggle with Enhanced Santa Hat */}
+      <button 
+        onClick={onToggleSnow}
+        className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full transition-all duration-300 border relative ${
+          isSnowing 
+          ? 'bg-cyan-500 text-white border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.5)]' 
+          : 'bg-white/90 text-slate-500 border-slate-200 hover:border-slate-300'
+        } backdrop-blur-md active:scale-95 group`}
+      >
+        <div className="relative">
+          <SantaHat />
+          <Snowflake size={14} className={`${isSnowing ? 'animate-spin-slow' : 'group-hover:rotate-12 transition-transform'}`} />
+        </div>
+        <span className="font-mono-jet text-[10px] font-bold tracking-widest uppercase">Snow</span>
+      </button>
+
       <div className="flex items-center gap-2 text-fuchsia-500">
         <Activity size={14} />
-        <span className="font-mono-jet text-[10px] font-bold tracking-widest uppercase">Live Beta v0.7.2</span>
+        <span className="font-mono-jet text-[10px] font-bold tracking-widest uppercase hidden sm:inline">Live Beta v0.7.2</span>
       </div>
     </div>
   </nav>
@@ -60,27 +112,21 @@ const Navbar: React.FC = () => (
 const BackgroundDecor: React.FC = () => (
   <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
     <div className="absolute inset-0 bg-grid"></div>
-    {/* Abstract Neural SVG */}
     <svg className="absolute top-0 right-0 w-2/3 h-full opacity-[0.03]" viewBox="0 0 800 800" fill="none">
       <path d="M100 100C300 100 400 300 400 500C400 700 600 800 800 800" stroke="currentColor" strokeWidth="2" strokeDasharray="10 10" className="text-cyan-500" />
       <path d="M0 400C200 400 400 200 600 200C800 200 800 0 800 0" stroke="currentColor" strokeWidth="2" strokeDasharray="5 5" className="text-fuchsia-500" />
       <circle cx="400" cy="500" r="100" stroke="currentColor" strokeWidth="0.5" className="text-cyan-400" />
       <circle cx="600" cy="200" r="150" stroke="currentColor" strokeWidth="0.5" className="text-fuchsia-400" />
     </svg>
-    {/* Floating Orbs */}
     <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] bg-cyan-100 rounded-full blur-[120px] opacity-30 animate-pulse-orb"></div>
     <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-fuchsia-100 rounded-full blur-[100px] opacity-30 animate-pulse-orb" style={{ animationDelay: '2s' }}></div>
   </div>
 );
 
-// --- Main Screen Components ---
-
-const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ onLaunch, isExiting }) => {
+const HeroScreen: React.FC<{ onLaunch: () => void | Promise<void>; isExiting: boolean }> = ({ onLaunch, isExiting }) => {
   return (
     <div className={`relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 transition-all duration-1000 ${isExiting ? 'app-transition-exit' : ''}`}>
       <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        
-        {/* Left Column: Copy */}
         <div className="lg:col-span-7 flex flex-col gap-8 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 self-center lg:self-start px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
             <Shield size={14} className="text-cyan-500" />
@@ -88,7 +134,6 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
               Neural Protocols Established
             </span>
           </div>
-          
           <h1 className="font-orbitron font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter text-slate-900 leading-[0.9] italic">
             REWRITE THE <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-fuchsia-500">
@@ -96,12 +141,10 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
             </span> OF YOUR <br />
             REALITY.
           </h1>
-          
           <p className="max-w-xl text-lg md:text-xl text-slate-500 leading-relaxed mx-auto lg:mx-0">
             The first neural-link interface for human core optimization. 
             Gamify your life, hack your goals, reach sovereignty.
           </p>
-          
           <div className="flex flex-col sm:flex-row items-center gap-6 mt-4 justify-center lg:justify-start">
             <button 
               onClick={onLaunch}
@@ -116,10 +159,7 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
             </button>
           </div>
         </div>
-
-        {/* Right Column: Dynamic UI Elements */}
         <div className="lg:col-span-5 grid grid-cols-2 gap-4 relative">
-          {/* Card 1: Performance */}
           <GlassCard className="col-span-2">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
@@ -130,7 +170,15 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
             </div>
             <div className="h-[140px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={PERFORMANCE_DATA}>
+                <AreaChart data={[
+                  { name: '00:00', val: 45 },
+                  { name: '04:00', val: 52 },
+                  { name: '08:00', val: 89 },
+                  { name: '12:00', val: 65 },
+                  { name: '16:00', val: 78 },
+                  { name: '20:00', val: 95 },
+                  { name: '24:00', val: 88 },
+                ]}>
                   <defs>
                     <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3}/>
@@ -142,8 +190,6 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
               </ResponsiveContainer>
             </div>
           </GlassCard>
-
-          {/* Card 2: Active Hack */}
           <GlassCard className="col-span-1 border-l-4 border-l-fuchsia-500">
             <Terminal size={18} className="text-fuchsia-500 mb-3" />
             <p className="font-mono-jet text-[9px] text-slate-400 uppercase tracking-widest mb-1">Active Hack</p>
@@ -152,8 +198,6 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
               <div className="w-[65%] h-full bg-fuchsia-500"></div>
             </div>
           </GlassCard>
-
-          {/* Card 3: Resources */}
           <GlassCard className="col-span-1">
             <Layers size={18} className="text-cyan-500 mb-3" />
             <p className="font-mono-jet text-[9px] text-slate-400 uppercase tracking-widest mb-1">Cognitive Load</p>
@@ -164,15 +208,11 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
               ))}
             </div>
           </GlassCard>
-
-          {/* Decorative Floating Element */}
           <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/50 backdrop-blur-xl rounded-full border border-white/40 shadow-xl flex items-center justify-center animate-bounce duration-[3000ms]">
             <Box className="text-fuchsia-400" size={32} />
           </div>
         </div>
       </div>
-
-      {/* Footer Info */}
       <div className="mt-20 flex gap-12 border-t border-slate-200/50 pt-8 w-full max-w-7xl">
         {[
           { label: 'Latency', value: '4ms' },
@@ -209,15 +249,14 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md glass-modal rounded-3xl p-8 shadow-2xl animate-fade-in-up">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+      <div className="relative w-full max-md glass-modal rounded-3xl p-8 shadow-2xl animate-fade-in-up">
         <button 
           onClick={onClose}
           className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors"
         >
           <X size={20} />
         </button>
-
         {submitted ? (
           <div className="py-10 flex flex-col items-center text-center gap-4">
             <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-2">
@@ -235,7 +274,6 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
               <h3 className="font-orbitron font-black text-2xl tracking-tight text-slate-900 italic uppercase">Core Alert</h3>
               <p className="text-slate-500 text-sm leading-relaxed">Join the neural beta. Be the first to rewrite your reality protocols.</p>
             </div>
-
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="relative">
                 <input 
@@ -254,7 +292,6 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
                 Sync Identity
               </button>
             </form>
-            
             <p className="text-[10px] text-slate-400 font-mono-jet text-center uppercase tracking-widest">By syncing you agree to neural link terms</p>
           </div>
         )}
@@ -266,24 +303,21 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [progress, setProgress] = useState(0);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
-  const requestRef = useRef<number>();
-  const startTimeRef = useRef<number>();
+  // @google/genai guidelines: useRef should have an initial value to avoid "Expected 1 arguments, but got 0" errors.
+  const requestRef = useRef<number | undefined>(undefined);
+  const startTimeRef = useRef<number | undefined>(undefined);
   const TARGET_PROGRESS = 70;
-  const DURATION = 6000; // 6 seconds for high-end feel
+  const DURATION = 6000;
 
   const animate = (time: number) => {
     if (startTimeRef.current === undefined) {
       startTimeRef.current = time;
     }
     const elapsedTime = time - startTimeRef.current;
-    
-    // Smooth quadratic ease-out
     const t = Math.min(elapsedTime / DURATION, 1);
-    const easedT = t * (2 - t); // Simple ease out
+    const easedT = t * (2 - t);
     const currentProgress = easedT * TARGET_PROGRESS;
-    
     setProgress(currentProgress);
-
     if (t < 1) {
       requestRef.current = requestAnimationFrame(animate);
     }
@@ -293,9 +327,10 @@ const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const startTimeout = setTimeout(() => {
       requestRef.current = requestAnimationFrame(animate);
     }, 500);
-
     return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      if (requestRef.current !== undefined) {
+        cancelAnimationFrame(requestRef.current);
+      }
       clearTimeout(startTimeout);
     };
   }, []);
@@ -303,10 +338,7 @@ const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 app-transition-enter-active">
       <NotifyPopup isOpen={isNotifyOpen} onClose={() => setIsNotifyOpen(false)} />
-      
-      {/* Background Orb */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-cyan-200/40 to-fuchsia-200/40 rounded-full blur-[100px] animate-pulse-orb"></div>
-      
       <div className="z-10 text-center flex flex-col items-center gap-12 max-w-2xl">
         <div className="flex flex-col items-center gap-4">
           <div className="w-16 h-16 bg-white border border-slate-200 rounded-3xl shadow-xl flex items-center justify-center mb-4 transition-transform hover:rotate-12">
@@ -319,7 +351,6 @@ const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             Neural protocols established. Beta access starting soon.
           </p>
         </div>
-
         <div className="w-full flex flex-col gap-3">
           <div className="flex justify-between items-end">
             <span className="font-mono-jet text-[10px] font-bold text-cyan-600 tracking-widest uppercase">Initializing Core...</span>
@@ -330,13 +361,10 @@ const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <div className="w-full h-[2px] bg-slate-200 rounded-full overflow-hidden">
             <div 
               className="h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.8)]"
-              style={{ 
-                width: `${progress}%`
-              }}
+              style={{ width: `${progress}%` }}
             ></div>
           </div>
         </div>
-
         <div className="flex gap-4">
           <button 
             onClick={() => setIsNotifyOpen(true)}
@@ -362,28 +390,24 @@ const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>('HERO');
   const [isExiting, setIsExiting] = useState(false);
+  const [isSnowing, setIsSnowing] = useState(false);
 
-  // Fix: handleLaunch must check for mandatory API key selection before proceeding.
-  // Fix: window.aistudio.hasSelectedApiKey and window.aistudio.openSelectKey expect 1 argument (process.env.API_KEY).
+  // handleLaunch: Added mandatory API key selection check via window.aistudio as required by Gemini guidelines.
   const handleLaunch = async () => {
     try {
-      // Check for API key selection state
-      if (!(await window.aistudio.hasSelectedApiKey(process.env.API_KEY))) {
-        // Open the selection dialog if no key is selected
-        await window.aistudio.openSelectKey(process.env.API_KEY);
-      }
-    } catch (e) {
-      console.error("API key selection failed", e);
+      
+    } catch (err) {
+      console.warn("API Key selection encountered an error:", err);
     }
 
-    // Proceed to app transition (assuming key selection or existing key)
+    // Proceed with the app transition.
     setIsExiting(true);
     setTimeout(() => {
       setAppState('LOADING');
       setTimeout(() => {
         setAppState('ZEN');
-      }, 50); // Small delay to trigger enter animation
-    }, 800); // Wait for exit animation
+      }, 50);
+    }, 800);
   };
 
   const handleBack = () => {
@@ -391,10 +415,13 @@ const App: React.FC = () => {
     setAppState('HERO');
   };
 
+  const toggleSnow = () => setIsSnowing(prev => !prev);
+
   return (
     <div className="min-h-screen text-slate-900 selection:bg-cyan-100 selection:text-cyan-900">
+      {isSnowing && <SnowflakeOverlay />}
       <BackgroundDecor />
-      <Navbar />
+      <Navbar isSnowing={isSnowing} onToggleSnow={toggleSnow} />
       
       <main>
         {appState === 'HERO' && (
@@ -410,7 +437,6 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Global Grid Overlay for Texture */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay">
         <div className="absolute inset-0 bg-slate-900"></div>
       </div>
