@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -115,8 +114,6 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
               </span>
               <ArrowRight size={16} className="text-cyan-400 transition-transform group-hover:translate-x-1" />
             </button>
-            
-
           </div>
         </div>
 
@@ -269,12 +266,38 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [progress, setProgress] = useState(0);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
+  const requestRef = useRef<number>();
+  const startTimeRef = useRef<number>();
+  const TARGET_PROGRESS = 70;
+  const DURATION = 6000; // 6 seconds for high-end feel
+
+  const animate = (time: number) => {
+    if (startTimeRef.current === undefined) {
+      startTimeRef.current = time;
+    }
+    const elapsedTime = time - startTimeRef.current;
+    
+    // Smooth quadratic ease-out
+    const t = Math.min(elapsedTime / DURATION, 1);
+    const easedT = t * (2 - t); // Simple ease out
+    const currentProgress = easedT * TARGET_PROGRESS;
+    
+    setProgress(currentProgress);
+
+    if (t < 1) {
+      requestRef.current = requestAnimationFrame(animate);
+    }
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setProgress(70);
-    }, 300); // Slightly delayed start for the animation
-    return () => clearTimeout(timer);
+    const startTimeout = setTimeout(() => {
+      requestRef.current = requestAnimationFrame(animate);
+    }, 500);
+
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      clearTimeout(startTimeout);
+    };
   }, []);
 
   return (
@@ -300,15 +323,15 @@ const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <div className="w-full flex flex-col gap-3">
           <div className="flex justify-between items-end">
             <span className="font-mono-jet text-[10px] font-bold text-cyan-600 tracking-widest uppercase">Initializing Core...</span>
-            <span className="font-mono-jet text-sm font-bold text-slate-800 tracking-widest">{progress}% LOADED</span>
+            <span className="font-mono-jet text-sm font-bold text-slate-800 tracking-widest">
+              {Math.floor(progress)}% LOADED
+            </span>
           </div>
           <div className="w-full h-[2px] bg-slate-200 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all ease-in-out"
+              className="h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.8)]"
               style={{ 
-                width: `${progress}%`,
-                transitionDuration: '2.5s',
-                transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                width: `${progress}%`
               }}
             ></div>
           </div>
@@ -340,7 +363,20 @@ const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>('HERO');
   const [isExiting, setIsExiting] = useState(false);
 
-  const handleLaunch = () => {
+  // Fix: handleLaunch must check for mandatory API key selection before proceeding.
+  // Fix: window.aistudio.hasSelectedApiKey and window.aistudio.openSelectKey expect 1 argument (process.env.API_KEY).
+  const handleLaunch = async () => {
+    try {
+      // Check for API key selection state
+      if (!(await window.aistudio.hasSelectedApiKey(process.env.API_KEY))) {
+        // Open the selection dialog if no key is selected
+        await window.aistudio.openSelectKey(process.env.API_KEY);
+      }
+    } catch (e) {
+      console.error("API key selection failed", e);
+    }
+
+    // Proceed to app transition (assuming key selection or existing key)
     setIsExiting(true);
     setTimeout(() => {
       setAppState('LOADING');
