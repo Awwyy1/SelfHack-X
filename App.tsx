@@ -58,13 +58,9 @@ const GlassCard: React.FC<{ children: React.ReactNode; className?: string }> = (
 
 const SantaHat: React.FC = () => (
   <div className="absolute -top-[18px] -left-[6px] pointer-events-none z-10 santa-hat-anim">
-    {/* Scaled up by ~15% (width 18->21, height 14->16) and darkened white parts for visibility */}
     <svg width="21" height="17" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Red Body */}
       <path d="M9 1L17 11H1L9 1Z" fill="#ef4444" stroke="#b91c1c" strokeWidth="0.5" />
-      {/* Darkened/Off-white Brim - slightly slimmer height */}
       <rect x="1" y="10.5" width="16" height="3" rx="1.5" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="0.5" />
-      {/* Darkened/Off-white Pom-pom */}
       <circle cx="9" cy="2" r="1.8" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="0.5" />
     </svg>
   </div>
@@ -85,7 +81,6 @@ const Navbar: React.FC<{ isSnowing: boolean; onToggleSnow: () => void }> = ({ is
         <div className="h-4 w-[1px] bg-slate-200"></div>
       </div>
       
-      {/* Snow Toggle with Enhanced Santa Hat */}
       <button 
         onClick={onToggleSnow}
         className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full transition-all duration-300 border relative ${
@@ -250,7 +245,8 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-md glass-modal rounded-3xl p-8 shadow-2xl animate-fade-in-up">
+      {/* Fixed class from max-md to max-w-md for correct width on medium screens */}
+      <div className="relative w-full max-w-md glass-modal rounded-3xl p-8 shadow-2xl animate-fade-in-up mx-auto">
         <button 
           onClick={onClose}
           className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors"
@@ -303,7 +299,6 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [progress, setProgress] = useState(0);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
-  // @google/genai guidelines: useRef should have an initial value to avoid "Expected 1 arguments, but got 0" errors.
   const requestRef = useRef<number | undefined>(undefined);
   const startTimeRef = useRef<number | undefined>(undefined);
   const TARGET_PROGRESS = 70;
@@ -385,22 +380,12 @@ const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   );
 };
 
-// --- App Component ---
-
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>('HERO');
   const [isExiting, setIsExiting] = useState(false);
   const [isSnowing, setIsSnowing] = useState(false);
 
-  // handleLaunch: Added mandatory API key selection check via window.aistudio as required by Gemini guidelines.
   const handleLaunch = async () => {
-    try {
-      
-    } catch (err) {
-      console.warn("API Key selection encountered an error:", err);
-    }
-
-    // Proceed with the app transition.
     setIsExiting(true);
     setTimeout(() => {
       setAppState('LOADING');
