@@ -111,14 +111,12 @@ const HeroScreen: React.FC<{ onLaunch: () => void; isExiting: boolean }> = ({ on
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <Zap size={20} className="text-cyan-500 group-hover:animate-pulse" />
               <span className="font-mono-jet font-bold text-sm tracking-[0.2em] text-cyan-600 uppercase">
-                Launch Interface
+                Launch APP
               </span>
               <ArrowRight size={16} className="text-cyan-400 transition-transform group-hover:translate-x-1" />
             </button>
             
-            <button className="font-mono-jet text-[11px] font-bold text-slate-400 hover:text-slate-600 transition-colors tracking-[0.15em] uppercase border-b border-transparent hover:border-slate-300 pb-1">
-              Read Documentation
-            </button>
+
           </div>
         </div>
 
