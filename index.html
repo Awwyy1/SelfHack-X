@@ -8,8 +8,8 @@
     <!-- Standard Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzA2YjZkNCI+PHBvbHlnb24gcG9pbnRzPSIxMyAyIDMgMTQgMTIgMTQgMTEgMjIgMjEgMTAgMTIgMTAgMTMgMiI+PC9wb2x5Z29uPjwvc3ZnPg==">
     
-    <!-- iOS Home Screen Icon (Apple Touch Icon) -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzA2YjZkNCI+PHBvbHlnb24gcG9pbnRzPSIxMyAyIDMgMTQgMTIgMTQgMTEgMjIgMjEgMTAgMTIgMTAgMTMgMiI+PC9wb2x5Z29uPjwvc3ZnPg==">
+    <!-- iOS Home Screen Icon (Apple Touch Icon) - Added background for visibility -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj4KICA8cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMDZiNmQ0Ii8+CiAgPHBvbHlnb24gcG9pbnRzPSI5Ny41IDE1IDIyLjUgMTA1IDkwIDEwNSA4Mi41IDE2NSAxNTcuNSA3NSA5MCA3NSA5Ny41IDE1IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=">
     
     <!-- Mobile UI Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -38,9 +38,13 @@
         0% { transform: translateY(-10vh) translateX(0); }
         100% { transform: translateY(110vh) translateX(20px); }
       }
-      @keyframes hat-wiggle {
-        0%, 100% { transform: rotate(-15deg); }
-        50% { transform: rotate(-10deg) translateY(-1px); }
+      @keyframes hat-life {
+        0%, 40%, 80%, 100% { transform: rotate(-15deg) translateY(0) scale(1); }
+        20%, 60% { transform: rotate(-10deg) translateY(-1.5px) scale(1.02); }
+        82% { transform: rotate(-15deg) translateY(1px) scaleY(0.85) scaleX(1.1); }
+        85% { transform: rotate(-15deg) translateY(-8px) scaleY(1.1) scaleX(0.9); }
+        90% { transform: rotate(-15deg) translateY(0) scaleY(0.9) scaleX(1.05); }
+        95% { transform: rotate(-15deg) translateY(-1px) scale(1); }
       }
       .animate-pulse-orb {
         animation: pulse-orb 8s ease-in-out infinite;
@@ -109,7 +113,8 @@
       }
 
       .santa-hat-anim {
-        animation: hat-wiggle 3s ease-in-out infinite;
+        animation: hat-life 5s ease-in-out infinite;
+        transform-origin: bottom center;
       }
     </style>
     
@@ -127,7 +132,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Application Entry Point -->
+    <!-- Application Entry Point - MUST be type="module" -->
     <script type="module" src="index.tsx"></script>
   </body>
 </html>
