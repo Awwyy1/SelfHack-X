@@ -1,3 +1,4 @@
+
 {
   "short_name": "SELFHACK",
   "name": "SELFHACK | Reality Hacking OS",
@@ -6,17 +7,18 @@
       "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj4KICA8cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjQyIiBmaWxsPSIjMDZiNmQ0Ii8+CiAgPHBvbHlnb24gcG9pbnRzPSIxMDQgMTYgMjQgMTEyIDk2IDExMiA4OCAxNzYgMTY4IDgwIDk2IDgwIDEwNCAxNiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+",
       "sizes": "192x192",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9Ijk2IiBmaWxsPSIjMDZiNmQ0Ii8+CiAgPHBvbHlnb24gcG9pbnRzPSIyNzcgNDMgNjQgMjk4IDI1NiAyOTggMjM1IDQ2OSA0NDggMjEzIDI1NiAyMTMgMjc3IDQzIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#f8fafc",
   "background_color": "#f8fafc"
 }
