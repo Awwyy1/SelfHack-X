@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle, Snowflake, Trophy, Mic, Sparkles } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area } from 'recharts';
 
@@ -139,20 +140,21 @@ const GameHeroCard: React.FC = () => {
   // Current title (cap at Eternal)
   const currentTitle = level <= 10 ? levelTitles[level - 1] : "Eternal";
 
-  // Simulate XP gain and level progression
+  // Smooth XP accumulation
   useEffect(() => {
     const interval = setInterval(() => {
-      setXp(prev => {
-        const newXp = prev >= 1000 ? 0 : prev + 2;
-        if (prev >= 998) {
-          setLevel(l => l + 1);
-        }
-        return newXp;
-      });
+      setXp(prev => prev + 2);
     }, 100);
-
     return () => clearInterval(interval);
   }, []);
+
+  // Clean level increase without side effects inside state
+  useEffect(() => {
+    if (xp >= 1000) {
+      setXp(0);
+      setLevel(prev => prev + 1);
+    }
+  }, [xp]);
 
   return (
     <div className="relative w-full group perspective-1000 max-w-[420px] mx-auto scale-95 lg:scale-100">
@@ -377,6 +379,7 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 const ComingSoonScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [progress, setProgress] = useState(0);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
+  // Using useRef properly from react import
   const requestRef = useRef<number | undefined>(undefined);
   const startTimeRef = useRef<number | undefined>(undefined);
   const TARGET_PROGRESS = 70;
