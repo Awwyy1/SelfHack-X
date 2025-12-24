@@ -125,16 +125,16 @@ const GameHeroCard: React.FC = () => {
 
   // Level titles hierarchy
   const levelTitles = [
-    "Dormant",    // Level 1
-    "Stirring",   // Level 2
+    "Seed",    // Level 1
+    "Scout",   // Level 2
     "Awaken",     // Level 3
-    "Seeker",     // Level 4
+    "Hunter",     // Level 4
     "Hacker",     // Level 5
-    "Architect",  // Level 6
-    "Sovereign",  // Level 7
-    "Ascended",   // Level 8
-    "Luminary",   // Level 9
-    "Eternal"     // Level 10+
+    "Leader",  // Level 6
+    "Champ",  // Level 7
+    "Titan",   // Level 8
+    "Prime",   // Level 9
+    "Legend"     // Level 10+
   ];
 
   // Current title (cap at Eternal)
