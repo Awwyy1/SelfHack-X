@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle, Snowflake } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
+import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle, Snowflake, Trophy, Mic, Sparkles } from 'lucide-react';
+import { ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 // --- Types ---
 
@@ -118,10 +118,109 @@ const BackgroundDecor: React.FC = () => (
   </div>
 );
 
+// === NEW HERO CARD COMPONENT (extracted from previous version) ===
+const GameHeroCard: React.FC = () => {
+  const [level, setLevel] = useState(1);
+  const [xp, setXp] = useState(850);
+
+  // Animate XP progress and level up
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setXp(prev => {
+        const newXp = prev >= 1000 ? 0 : prev + 2;
+        if (prev >= 998) setLevel(l => l + 1);
+        return newXp;
+      });
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative w-full group perspective-1000 max-w-[420px] mx-auto scale-95 lg:scale-100">
+      {/* Main Hero Card */}
+      <div className="relative w-full bg-white border border-slate-200 rounded-[32px] md:rounded-[40px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] overflow-hidden transition-all duration-700 group-hover:shadow-cyan-200/40 group-hover:rotate-y-3">
+        <div className="absolute top-0 left-0 h-full w-1.5 md:w-2 bg-gradient-to-b from-cyan-400 to-fuchsia-500"></div>
+        
+        <div className="flex flex-col">
+          {/* Header Area */}
+          <div className="p-6 md:p-10 flex items-center gap-5 md:gap-6">
+            <div className="w-16 h-16 md:w-24 md:h-24 rounded-[24px] md:rounded-[32px] bg-white shadow-2xl border border-slate-50 flex items-center justify-center relative shrink-0">
+              <div className="absolute inset-0 bg-cyan-400/5 blur-2xl animate-pulse rounded-full"></div>
+              <Zap size={32} className="text-cyan-500 fill-current md:scale-125" />
+            </div>
+            <div className="flex flex-col">
+              <h4 className="font-orbitron font-black text-xl md:text-3xl text-slate-900 tracking-tighter uppercase leading-none">PILOT_ONE</h4>
+              <div className="flex items-center gap-2 mt-2 bg-slate-50 self-start px-2.5 py-1 rounded-full border border-slate-100">
+                <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></div>
+                <span className="font-mono-jet text-[8px] md:text-[9px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Status: Active</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Stats Section */}
+          <div className="px-6 md:px-10 pb-8 md:pb-10 flex flex-col gap-6 md:gap-8">
+            <div className="flex items-end justify-between">
+              <div className="flex flex-col">
+                <span className="font-mono-jet text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Level</span>
+                <span className="font-orbitron font-black text-4xl md:text-7xl text-slate-900 tracking-tighter leading-none">{level}</span>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <span className="font-mono-jet text-[9px] font-bold text-slate-400 uppercase tracking-widest">Progress</span>
+                <span className="font-orbitron font-black text-lg md:text-2xl text-slate-800">{xp} XP</span>
+              </div>
+            </div>
+
+            {/* Level Progress Bar */}
+            <div className="w-full h-2.5 bg-slate-50 rounded-full overflow-hidden relative border border-slate-100">
+              <div 
+                className="h-full bg-gradient-to-r from-cyan-400 to-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.6)] transition-all duration-100 ease-linear" 
+                style={{ width: `${(xp/1000)*100}%` }}
+              ></div>
+            </div>
+
+            {/* Stat Meters (Focus & Energy) */}
+            <div className="grid grid-cols-2 gap-6 md:gap-8">
+              <div className="space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-mono-jet text-[8px] font-bold text-slate-400 uppercase tracking-widest">Focus</span>
+                  <span className="font-mono-jet text-[10px] font-bold text-cyan-600">84%</span>
+                </div>
+                <div className="flex gap-0.5">
+                  {[1,1,1,1,1,1,1,1,0,0].map((v, i) => (
+                    <div key={i} className={`h-1 flex-1 rounded-sm ${v ? 'bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.3)]' : 'bg-slate-100'}`}></div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-mono-jet text-[8px] font-bold text-slate-400 uppercase tracking-widest">Energy</span>
+                  <span className="font-mono-jet text-[10px] font-bold text-fuchsia-500">62%</span>
+                </div>
+                <div className="flex gap-0.5">
+                  {[1,1,1,1,1,1,0,0,0,0].map((v, i) => (
+                    <div key={i} className={`h-1 flex-1 rounded-sm ${v ? 'bg-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.3)]' : 'bg-slate-100'}`}></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Trophy decoration in top-right corner */}
+      <div className="absolute -top-6 -right-3 md:-top-8 md:-right-8 w-12 h-12 md:w-16 md:h-16 bg-white rounded-[18px] md:rounded-[24px] shadow-2xl border border-slate-50 flex items-center justify-center animate-pulse z-10">
+        <Trophy size={20} className="text-yellow-500 drop-shadow-sm md:scale-125" />
+      </div>
+    </div>
+  );
+};
+
 const HeroScreen: React.FC<{ onLaunch: () => void | Promise<void>; isExiting: boolean }> = ({ onLaunch, isExiting }) => {
   return (
     <div className={`relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 transition-all duration-1000 ${isExiting ? 'app-transition-exit' : ''}`}>
       <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        {/* Left column: Text content and CTA */}
         <div className="lg:col-span-7 flex flex-col gap-8 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 self-center lg:self-start px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
             <Shield size={14} className="text-cyan-500" />
@@ -154,60 +253,14 @@ const HeroScreen: React.FC<{ onLaunch: () => void | Promise<void>; isExiting: bo
             </button>
           </div>
         </div>
-        <div className="lg:col-span-5 grid grid-cols-2 gap-4 relative">
-          <GlassCard className="col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <Cpu size={16} className="text-cyan-500" />
-                <span className="font-mono-jet text-[10px] font-bold text-slate-400 uppercase tracking-widest">Neural Performance</span>
-              </div>
-              <span className="text-xs font-bold text-cyan-600">+12%</span>
-            </div>
-            <div className="h-[140px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={[
-                  { name: '00:00', val: 45 },
-                  { name: '04:00', val: 52 },
-                  { name: '08:00', val: 89 },
-                  { name: '12:00', val: 65 },
-                  { name: '16:00', val: 78 },
-                  { name: '20:00', val: 95 },
-                  { name: '24:00', val: 88 },
-                ]}>
-                  <defs>
-                    <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <Area type="monotone" dataKey="val" stroke="#06b6d4" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </GlassCard>
-          <GlassCard className="col-span-1 border-l-4 border-l-fuchsia-500">
-            <Terminal size={18} className="text-fuchsia-500 mb-3" />
-            <p className="font-mono-jet text-[9px] text-slate-400 uppercase tracking-widest mb-1">Active Hack</p>
-            <p className="font-bold text-sm text-slate-800">Deep Work v2.4</p>
-            <div className="mt-4 w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-              <div className="w-[65%] h-full bg-fuchsia-500"></div>
-            </div>
-          </GlassCard>
-          <GlassCard className="col-span-1">
-            <Layers size={18} className="text-cyan-500 mb-3" />
-            <p className="font-mono-jet text-[9px] text-slate-400 uppercase tracking-widest mb-1">Cognitive Load</p>
-            <p className="font-bold text-sm text-slate-800">Optimal (24%)</p>
-            <div className="mt-4 flex gap-1">
-              {[1,1,1,1,0,0,0,0].map((v, i) => (
-                <div key={i} className={`h-2 flex-1 rounded-sm ${v ? 'bg-cyan-400' : 'bg-slate-100'}`}></div>
-              ))}
-            </div>
-          </GlassCard>
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/50 backdrop-blur-xl rounded-full border border-white/40 shadow-xl flex items-center justify-center animate-bounce duration-[3000ms]">
-            <Box className="text-fuchsia-400" size={32} />
-          </div>
+
+        {/* Right column: New Game-Style Hero Card */}
+        <div className="lg:col-span-5 flex items-center justify-center">
+          <GameHeroCard />
         </div>
       </div>
+
+      {/* Bottom stats row */}
       <div className="mt-20 flex gap-12 border-t border-slate-200/50 pt-8 w-full max-w-7xl">
         {[
           { label: 'Latency', value: '4ms' },
@@ -245,7 +298,6 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-      {/* Fixed class from max-md to max-w-md for correct width on medium screens */}
       <div className="relative w-full max-w-md glass-modal rounded-3xl p-8 shadow-2xl animate-fade-in-up mx-auto">
         <button 
           onClick={onClose}
