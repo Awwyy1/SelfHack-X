@@ -149,7 +149,7 @@ const GameHeroCard: React.FC = () => {
               <Zap size={32} className="text-cyan-500 fill-current md:scale-125" />
             </div>
             <div className="flex flex-col">
-              <h4 className="font-orbitron font-black text-xl md:text-3xl text-slate-900 tracking-tighter uppercase leading-none">PILOT_ONE</h4>
+              <h4 className="font-orbitron font-black text-xl md:text-3xl text-slate-900 tracking-tighter uppercase leading-none">AWAKEN</h4>
               <div className="flex items-center gap-2 mt-2 bg-slate-50 self-start px-2.5 py-1 rounded-full border border-slate-100">
                 <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></div>
                 <span className="font-mono-jet text-[8px] md:text-[9px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Status: Active</span>
