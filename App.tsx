@@ -3,7 +3,6 @@ import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, 
 import { ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 // --- Types ---
-
 type AppState = 'HERO' | 'LOADING' | 'ZEN';
 
 // --- Components ---
@@ -118,20 +117,59 @@ const BackgroundDecor: React.FC = () => (
   </div>
 );
 
-// === NEW HERO CARD COMPONENT (extracted from previous version) ===
+// === HERO CARD WITH DYNAMIC TITLES AND LEVEL-UP ANIMATION ===
 const GameHeroCard: React.FC = () => {
   const [level, setLevel] = useState(1);
   const [xp, setXp] = useState(850);
+  const [previousLevel, setPreviousLevel] = useState(1);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [newTitle, setNewTitle] = useState<string | null>(null);
 
-  // Animate XP progress and level up
+  // Level titles hierarchy
+  const levelTitles = [
+    "Dormant",    // Level 1
+    "Stirring",   // Level 2
+    "Awaken",     // Level 3
+    "Seeker",     // Level 4
+    "Hacker",     // Level 5
+    "Architect",  // Level 6
+    "Sovereign",  // Level 7
+    "Ascended",   // Level 8
+    "Luminary",   // Level 9
+    "Eternal"     // Level 10+
+  ];
+
+  // Current title (cap at Eternal)
+  const currentTitle = level <= 10 ? levelTitles[level - 1] : "Eternal";
+
+  // Trigger level-up animation when level increases
+  useEffect(() => {
+    if (level > previousLevel) {
+      setNewTitle(currentTitle);
+      setShowLevelUp(true);
+      setPreviousLevel(level);
+
+      const timer = setTimeout(() => {
+        setShowLevelUp(false);
+        setNewTitle(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [level, previousLevel, currentTitle]);
+
+  // Simulate XP gain and level progression
   useEffect(() => {
     const interval = setInterval(() => {
       setXp(prev => {
         const newXp = prev >= 1000 ? 0 : prev + 2;
-        if (prev >= 998) setLevel(l => l + 1);
+        if (prev >= 998) {
+          setLevel(l => l + 1);
+        }
         return newXp;
       });
     }, 100);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -140,8 +178,22 @@ const GameHeroCard: React.FC = () => {
       {/* Main Hero Card */}
       <div className="relative w-full bg-white border border-slate-200 rounded-[32px] md:rounded-[40px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] overflow-hidden transition-all duration-700 group-hover:shadow-cyan-200/40 group-hover:rotate-y-3">
         <div className="absolute top-0 left-0 h-full w-1.5 md:w-2 bg-gradient-to-b from-cyan-400 to-fuchsia-500"></div>
-        
-        <div className="flex flex-col">
+
+        {/* Level Up Animation Overlay */}
+        {showLevelUp && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50 bg-white/60 backdrop-blur-sm">
+            <div className="text-center animate-level-up">
+              <p className="text-5xl md:text-7xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-fuchsia-500 mb-4">
+                LEVEL UP!
+              </p>
+              <p className="text-3xl md:text-5xl font-orbitron font-bold text-slate-900 tracking-widest">
+                {newTitle}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-col relative z-10">
           {/* Header Area */}
           <div className="p-6 md:p-10 flex items-center gap-5 md:gap-6">
             <div className="w-16 h-16 md:w-24 md:h-24 rounded-[24px] md:rounded-[32px] bg-white shadow-2xl border border-slate-50 flex items-center justify-center relative shrink-0">
@@ -149,10 +201,14 @@ const GameHeroCard: React.FC = () => {
               <Zap size={32} className="text-cyan-500 fill-current md:scale-125" />
             </div>
             <div className="flex flex-col">
-              <h4 className="font-orbitron font-black text-xl md:text-3xl text-slate-900 tracking-tighter uppercase leading-none">AWAKEN</h4>
+              <h4 className="font-orbitron font-black text-xl md:text-3xl text-slate-900 tracking-tighter uppercase leading-none transition-all duration-500">
+                {currentTitle}
+              </h4>
               <div className="flex items-center gap-2 mt-2 bg-slate-50 self-start px-2.5 py-1 rounded-full border border-slate-100">
                 <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></div>
-                <span className="font-mono-jet text-[8px] md:text-[9px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Status: Active</span>
+                <span className="font-mono-jet text-[8px] md:text-[9px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+                  Status: Active
+                </span>
               </div>
             </div>
           </div>
@@ -162,7 +218,9 @@ const GameHeroCard: React.FC = () => {
             <div className="flex items-end justify-between">
               <div className="flex flex-col">
                 <span className="font-mono-jet text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Level</span>
-                <span className="font-orbitron font-black text-4xl md:text-7xl text-slate-900 tracking-tighter leading-none">{level}</span>
+                <span className="font-orbitron font-black text-4xl md:text-7xl text-slate-900 tracking-tighter leading-none">
+                  {level}
+                </span>
               </div>
               <div className="flex flex-col items-end gap-1">
                 <span className="font-mono-jet text-[9px] font-bold text-slate-400 uppercase tracking-widest">Progress</span>
@@ -173,12 +231,12 @@ const GameHeroCard: React.FC = () => {
             {/* Level Progress Bar */}
             <div className="w-full h-2.5 bg-slate-50 rounded-full overflow-hidden relative border border-slate-100">
               <div 
-                className="h-full bg-gradient-to-r from-cyan-400 to-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.6)] transition-all duration-100 ease-linear" 
-                style={{ width: `${(xp/1000)*100}%` }}
-              ></div>
+                className="h-full bg-gradient-to-r from-cyan-400 to-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.6)] transition-all duration-300 ease-linear" 
+                style={{ width: `${(xp / 1000) * 100}%` }}
+              />
             </div>
 
-            {/* Stat Meters (Focus & Energy) */}
+            {/* Stat Meters */}
             <div className="grid grid-cols-2 gap-6 md:gap-8">
               <div className="space-y-2.5">
                 <div className="flex justify-between items-center">
@@ -187,7 +245,7 @@ const GameHeroCard: React.FC = () => {
                 </div>
                 <div className="flex gap-0.5">
                   {[1,1,1,1,1,1,1,1,0,0].map((v, i) => (
-                    <div key={i} className={`h-1 flex-1 rounded-sm ${v ? 'bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.3)]' : 'bg-slate-100'}`}></div>
+                    <div key={i} className={`h-1 flex-1 rounded-sm ${v ? 'bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.3)]' : 'bg-slate-100'}`} />
                   ))}
                 </div>
               </div>
@@ -198,7 +256,7 @@ const GameHeroCard: React.FC = () => {
                 </div>
                 <div className="flex gap-0.5">
                   {[1,1,1,1,1,1,0,0,0,0].map((v, i) => (
-                    <div key={i} className={`h-1 flex-1 rounded-sm ${v ? 'bg-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.3)]' : 'bg-slate-100'}`}></div>
+                    <div key={i} className={`h-1 flex-1 rounded-sm ${v ? 'bg-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.3)]' : 'bg-slate-100'}`} />
                   ))}
                 </div>
               </div>
@@ -206,8 +264,8 @@ const GameHeroCard: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Trophy decoration in top-right corner */}
+
+      {/* Trophy decoration */}
       <div className="absolute -top-6 -right-3 md:-top-8 md:-right-8 w-12 h-12 md:w-16 md:h-16 bg-white rounded-[18px] md:rounded-[24px] shadow-2xl border border-slate-50 flex items-center justify-center animate-pulse z-10">
         <Trophy size={20} className="text-yellow-500 drop-shadow-sm md:scale-125" />
       </div>
@@ -254,7 +312,7 @@ const HeroScreen: React.FC<{ onLaunch: () => void | Promise<void>; isExiting: bo
           </div>
         </div>
 
-        {/* Right column: New Game-Style Hero Card */}
+        {/* Right column: Hero Card with levels */}
         <div className="lg:col-span-5 flex items-center justify-center">
           <GameHeroCard />
         </div>
