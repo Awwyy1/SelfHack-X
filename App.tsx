@@ -311,17 +311,29 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (email) {
+    try {
+      await fetch('https://script.google.com/macros/s/AKfycbxmMVj7pLdXvVji75Gmdx4D_kNb0IIqqzaQHKfj86ma6MVLnklBhks8JU-7B2eEAvia/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      
       setSubmitted(true);
       setTimeout(() => {
         onClose();
         setSubmitted(false);
         setEmail('');
       }, 2000);
+    } catch (error) {
+      console.error('Submit error:', error);
     }
-  };
+  }
+};
+
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
