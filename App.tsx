@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle, Snowflake, Trophy, Mic, Sparkles } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area } from 'recharts';
 
@@ -117,13 +117,10 @@ const BackgroundDecor: React.FC = () => (
   </div>
 );
 
-// === HERO CARD WITH DYNAMIC TITLES AND LEVEL-UP ANIMATION ===
+// === HERO CARD WITH DYNAMIC TITLES ONLY (NO LEVEL-UP ANIMATION) ===
 const GameHeroCard: React.FC = () => {
   const [level, setLevel] = useState(1);
   const [xp, setXp] = useState(850);
-  const [previousLevel, setPreviousLevel] = useState(1);
-  const [showLevelUp, setShowLevelUp] = useState(false);
-  const [newTitle, setNewTitle] = useState<string | null>(null);
 
   // Level titles hierarchy
   const levelTitles = [
@@ -141,22 +138,6 @@ const GameHeroCard: React.FC = () => {
 
   // Current title (cap at Eternal)
   const currentTitle = level <= 10 ? levelTitles[level - 1] : "Eternal";
-
-  // Trigger level-up animation when level increases
-  useEffect(() => {
-    if (level > previousLevel) {
-      setNewTitle(currentTitle);
-      setShowLevelUp(true);
-      setPreviousLevel(level);
-
-      const timer = setTimeout(() => {
-        setShowLevelUp(false);
-        setNewTitle(null);
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [level, previousLevel, currentTitle]);
 
   // Simulate XP gain and level progression
   useEffect(() => {
@@ -179,21 +160,7 @@ const GameHeroCard: React.FC = () => {
       <div className="relative w-full bg-white border border-slate-200 rounded-[32px] md:rounded-[40px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] overflow-hidden transition-all duration-700 group-hover:shadow-cyan-200/40 group-hover:rotate-y-3">
         <div className="absolute top-0 left-0 h-full w-1.5 md:w-2 bg-gradient-to-b from-cyan-400 to-fuchsia-500"></div>
 
-        {/* Level Up Animation Overlay */}
-        {showLevelUp && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50 bg-white/60 backdrop-blur-sm">
-            <div className="text-center animate-level-up">
-              <p className="text-5xl md:text-7xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-fuchsia-500 mb-4">
-                LEVEL UP!
-              </p>
-              <p className="text-3xl md:text-5xl font-orbitron font-bold text-slate-900 tracking-widest">
-                {newTitle}
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col relative z-10">
+        <div className="flex flex-col">
           {/* Header Area */}
           <div className="p-6 md:p-10 flex items-center gap-5 md:gap-6">
             <div className="w-16 h-16 md:w-24 md:h-24 rounded-[24px] md:rounded-[32px] bg-white shadow-2xl border border-slate-50 flex items-center justify-center relative shrink-0">
@@ -201,6 +168,7 @@ const GameHeroCard: React.FC = () => {
               <Zap size={32} className="text-cyan-500 fill-current md:scale-125" />
             </div>
             <div className="flex flex-col">
+              {/* Dynamic level title */}
               <h4 className="font-orbitron font-black text-xl md:text-3xl text-slate-900 tracking-tighter uppercase leading-none transition-all duration-500">
                 {currentTitle}
               </h4>
@@ -312,7 +280,7 @@ const HeroScreen: React.FC<{ onLaunch: () => void | Promise<void>; isExiting: bo
           </div>
         </div>
 
-        {/* Right column: Hero Card with levels */}
+        {/* Right column: Hero Card with dynamic title */}
         <div className="lg:col-span-5 flex items-center justify-center">
           <GameHeroCard />
         </div>
