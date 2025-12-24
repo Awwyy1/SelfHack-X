@@ -1,7 +1,9 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle, Snowflake, Trophy, Mic, Sparkles } from 'lucide-react';
+import { Zap, Shield, Cpu, Activity, Layout, Terminal, ArrowRight, Layers, Box, X, Mail, CheckCircle, Snowflake, Trophy, Mic, Sparkles, Loader2 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area } from 'recharts';
+
+// --- Configuration ---
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE0FB4A-wwZtxsVZy-42cCD6kUW9uFl4B-VMJze50qrTI6TuaCqfIxog83GdBUzhsp/exec';
 
 // --- Types ---
 type AppState = 'HERO' | 'LOADING' | 'ZEN';
@@ -309,20 +311,43 @@ const HeroScreen: React.FC<{ onLaunch: () => void | Promise<void>; isExiting: bo
 const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
+    if (!email) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      });
       setSubmitted(true);
-      setTimeout(() => {
+    } catch (err) {
+      setError('Connection failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (submitted) {
+      const timer = setTimeout(() => {
         onClose();
         setSubmitted(false);
         setEmail('');
-      }, 2000);
+      }, 2500);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [submitted, onClose]);
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
@@ -355,17 +380,21 @@ const NotifyPopup: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
                 <input 
                   type="email" 
                   required
+                  disabled={loading}
                   placeholder="transcription@neural.link"
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 transition-all font-mono-jet text-sm"
+                  className={`w-full px-5 py-4 bg-slate-50 border ${error ? 'border-red-300' : 'border-slate-200'} rounded-2xl outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 transition-all font-mono-jet text-sm disabled:opacity-50`}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                {error && <p className="text-[10px] text-red-500 font-mono-jet mt-2 uppercase">{error}</p>}
               </div>
               <button 
                 type="submit"
-                className="w-full py-4 bg-slate-900 text-white font-mono-jet text-xs font-bold tracking-[0.2em] uppercase rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/20"
+                disabled={loading}
+                className="w-full py-4 bg-slate-900 text-white font-mono-jet text-xs font-bold tracking-[0.2em] uppercase rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2"
               >
-                Sync Identity
+                {loading ? <Loader2 size={16} className="animate-spin" /> : null}
+                {loading ? 'Syncing...' : 'Sync Identity'}
               </button>
             </form>
             <p className="text-[10px] text-slate-400 font-mono-jet text-center uppercase tracking-widest">By syncing you agree to neural link terms</p>
