@@ -130,7 +130,7 @@ const GameHeroCard: React.FC = () => {
     "Awaken",     // Level 3
     "Hunter",     // Level 4
     "Hacker",     // Level 5
-    "Leader",  // Level 6
+    "Pro",  // Level 6
     "Champ",  // Level 7
     "Titan",   // Level 8
     "Prime",   // Level 9
