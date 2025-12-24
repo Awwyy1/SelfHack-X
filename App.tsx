@@ -98,7 +98,7 @@ const Navbar: React.FC<{ isSnowing: boolean; onToggleSnow: () => void }> = ({ is
 
       <div className="flex items-center gap-2 text-fuchsia-500">
         <Activity size={14} />
-        <span className="font-mono-jet text-[10px] font-bold tracking-widest uppercase hidden sm:inline">Live Beta v0.7.2</span>
+        <span className="font-mono-jet text-[10px] font-bold tracking-widest uppercase hidden sm:inline">Beta v0.3.</span>
       </div>
     </div>
   </nav>
