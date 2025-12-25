@@ -66,7 +66,7 @@ const SantaHat: React.FC = () => (
 );
 
 const Navbar: React.FC<{ isSnowing: boolean; onToggleSnow: () => void }> = ({ isSnowing, onToggleSnow }) => (
-  <nav className="fixed top-0 left-0 right-0 z-[110] px-8 py-6 flex items-center justify-between pointer-events-none">
+  <nav className="fixed top-0 left-0 right-0 z-[110] px-8 py-6 pt-[calc(1.5rem+env(safe-area-inset-top))] flex items-center justify-between pointer-events-none">
     <div className="pointer-events-auto">
       <Logo />
     </div>
