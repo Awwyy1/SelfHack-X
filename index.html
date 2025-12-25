@@ -1,24 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>SELFHACK | Reality Hacking OS</title>
-    
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-52QB345YRZ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-52QB345YRZ');
+    </script>
+
     <!-- Standard Favicon -->
     <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzA2YjZkNCI+PHBvbHlnb24gcG9pbnRzPSIxMyAyIDMgMTQgMTIgMTQgMTEgMjIgMjEgMTAgMTIgMTAgMTMgMiI+PC9wb2x5Z29uPjwvc3ZnPg==">
     <link rel="shortcut icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzA2YjZkNCI+PHBvbHlnb24gcG9pbnRzPSIxMyAyIDMgMTQgMTIgMTQgMTEgMjIgMjEgMTAgMTIgMTAgMTMgMiI+PC9wb2x5Z29uPjwvc3ZnPg==">
-    
+
     <!-- iOS Home Screen Icon (Apple Touch Icon) -->
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj4KICA8cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMDZiNmQ0Ii8+CiAgPHBvbHlnb24gcG9pbnRzPSI5Ny41IDE1IDIyLjUgMTA1IDkwIDEwNSA4Mi41IDE2NSAxNTcuNSA3NSA5MCA3NSA5Ny41IDE1IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=">
-    
+
     <!-- Mobile UI Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SELFHACK">
     <meta name="theme-color" content="#f8fafc">
-    
+
     <!-- Web App Manifest with Cache Busting -->
     <link rel="manifest" href="manifest.json?v=3">
 
@@ -26,7 +34,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
-    
+
     <style>
       @keyframes pulse-orb {
         0%, 100% { transform: scale(1); opacity: 0.6; filter: blur(40px); }
@@ -83,7 +91,7 @@
       }
       .font-orbitron { font-family: 'Orbitron', sans-serif; }
       .font-mono-jet { font-family: 'JetBrains+Mono', monospace; }
-      
+
       .bg-grid {
         background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
         background-size: 40px 40px;
@@ -96,7 +104,7 @@
         filter: blur(10px);
         transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      
+
       .app-transition-enter-active {
         opacity: 1;
         transform: scale(1);
@@ -120,7 +128,7 @@
         transform-origin: bottom center;
       }
     </style>
-    
+
     <script type="importmap">
     {
       "imports": {
