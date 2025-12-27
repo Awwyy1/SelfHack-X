@@ -269,7 +269,7 @@ const HeroScreen: React.FC<{ onLaunch: () => void | Promise<void>; isExiting: bo
           <div className="flex flex-col sm:flex-row items-center gap-6 mt-4 justify-center lg:justify-start">
             <button 
   onClick={onLaunch}
-  className="group relative px-10 py-5 bg-cyan-500 border-[1.5px] border-cyan-400 rounded-2xl overflow-hidden shadow-[0_20px_40px_-12px_rgba(6,182,212,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_25px_50px_-12px_rgba(6,182,212,0.5)] flex items-center gap-3 active:scale-95"
+  className="group relative px-10 py-5 bg-cyan-200 border-[1.5px] border-cyan-400 rounded-2xl overflow-hidden shadow-[0_20px_40px_-12px_rgba(6,182,212,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_25px_50px_-12px_rgba(6,182,212,0.5)] flex items-center gap-3 active:scale-95"
 >
   <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
   <Zap size={20} className="text-white fill-white group-hover:animate-pulse" />
